@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html ng-app="listaTelefonica">
+
+<head>
+    <title>Lista Teleônica</title>
+    <meta charset="utf-8">
+    <script src="js/angular.js"></script>
+    <script>
+        const app = angular.module("listaTelefonica", []);
+        app.controller("listaTelefonicaCtrl", ($scope) => {
+            $scope.title = "Lista Telefônica";
+            $scope.contatos = [
+                { nome: "Rodrigo França", telefone: "984880409" },
+                { nome: "Fabiano França", telefone: "987861965" },
+                { nome: "Marcelo França", telefone: "985662369" }
+            ];
+
+
+            // $scope.adicionarContato = () => {
+            //     console.log($scope.nome);
+            //     console.log($scope.telefone);
+            // };
+
+            // $scope.adicionarContato = (nome, telefone) => {
+            //     console.log(nome);
+            //     console.log(telefone);
+            // };
+
+            $scope.adicionarContato = (contato) => {
+                console.log(contato.nome);
+                // instanciar um novo objeto com angular.copy
+                $scope.contatos.push(angular.copy(contato));
+            };
+
+        }); // fim do scopo do controller
+    </script>
+
+</head>
+
+<body ng-controller="listaTelefonicaCtrl">
+    <h1>{{title}}</h1>
+    <br>
+    <table border="1px">
+        <tr>
+            <th>Nome</th>
+            <th>Telefone</th>
+        </tr>
+        <tr ng-repeat="contato in contatos">
+            <td>{{contato.nome}}</td>
+            <td>{{contato.telefone}}</td>
+        </tr>
+    </table>
+    <hr>
+
+
+    <!-- <div>
+        <input type="text" placeholder="Nome" ng-model="nome">
+        <br>
+        <input type="text" placeholder="Telefone" ng-model="telefone"> {{nome}}, {{telefone}}
+        <hr>
+        <button type="button" ng-click="adicionarContato()">Adicioar</button>
+    </div> -->
+
+    <!-- <div>
+        <input type="text" placeholder="Nome" ng-model="nome">
+        <br>
+        <input type="text" placeholder="Telefone" ng-model="telefone"> {{nome}}, {{telefone}}
+        <hr>
+        <button type="button" ng-click="adicionarContato(nome,telefone)">Adicioar</button>
+    </div> -->
+
+    <div>
+        <input type="text" placeholder="Nome" ng-model="contato.nome">
+        <br>
+        <input type="text" placeholder="Telefone" ng-model="contato.telefone"> {{contato}}
+        <hr>
+        <button type="button" ng-click="adicionarContato(contato)">Adicioar</button>
+    </div>
+</body>
+
+</html>
