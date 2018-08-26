@@ -5,6 +5,16 @@
     <title>Lista Teleônica</title>
     <meta charset="utf-8">
     <script src="js/angular.js"></script>
+
+    <style>
+        .yellow {
+            background-color: yellow;
+        }
+
+        .selecionado {
+            background-color: red;
+        }
+    </style>
     <script>
         const app = angular.module("listaTelefonica", []);
         app.controller("listaTelefonicaCtrl", ($scope) => {
@@ -14,7 +24,6 @@
                 { nome: "Fabiano França", telefone: "987861965" },
                 { nome: "Marcelo França", telefone: "985662369" }
             ];
-
 
             // $scope.adicionarContato = () => {
             //     console.log($scope.nome);
@@ -27,13 +36,44 @@
             // };
 
             $scope.adicionarContato = (contato) => {
-                console.log(contato.nome);
+                console.log(contato.selecionado);
                 // instanciar um novo objeto com angular.copy
                 $scope.contatos.push(angular.copy(contato));
             };
 
+            $scope.yellow = "yellow";
+            $scope.selecionado = "selecionado";
+            $scope.operadoras = [
+                { nome: "VIVO", codigo: "20", categoria: "celular" },
+                { nome: "TIM", codigo: "21", categoria: "celular" },
+                { nome: "CLARO", codigo: "22", categoria: "celular" },
+                { nome: "OI", codigo: "23", categoria: "celular" },
+                { nome: "GVT", codigo: "24", categoria: "fixo" },
+                { nome: "TIM", codigo: "25", categoria: "fixo" }
+            ];
+
+            $scope.removerContatos = (contatos) => {
+                $scope.contatos = contatos.filter((contato) => {
+                    if (!contato.selecionado) return contato;
+                });
+                console.log($scope.contatos);
+
+            };
+
+            $scope.isContatoSelecionado = (contatos) => {
+                console.log(contatos);
+                return contatos.some((contato) => {
+                    return contato.selecionado;
+                });
+                console.log(isContatoSelecionado);
+            };
+
+
         }); // fim do scopo do controller
     </script>
+
+
+
 
 </head>
 
@@ -42,12 +82,20 @@
     <br>
     <table border="1px">
         <tr>
+            <th></th>
             <th>Nome</th>
             <th>Telefone</th>
+            <th>Operadora</th>
+            <th>Categoria</th>
+
         </tr>
-        <tr ng-repeat="contato in contatos">
+        <!-- <tr ng-class="yellow" ng-repeat="contato in contatos"> -->
+        <tr ng-class="{selecionado : contato.selecionado}" ng-repeat="contato in contatos" ng-optios>
+            <td><input type="checkbox" ng-model="contato.selecionado"></td>
             <td>{{contato.nome}}</td>
             <td>{{contato.telefone}}</td>
+            <td>{{contato.operadora.nome}}</td>
+            <td>{{contato.operadora.categoria}}</td>
         </tr>
     </table>
     <hr>
@@ -72,9 +120,24 @@
     <div>
         <input type="text" placeholder="Nome" ng-model="contato.nome">
         <br>
-        <input type="text" placeholder="Telefone" ng-model="contato.telefone"> {{contato}}
+        <input type="text" placeholder="Telefone" ng-model="contato.telefone"> {{contato.selecionado}}
+        <br>
+        <!-- <select>
+            <option value="vivo">VIVO</option>
+            <option value="oi">OI</option>
+            <option value="claro">CLARO</option>
+            <option value="tim">TIM</option>
+        </select> -->
+
+        <!-- <select ng-options="operadora.codigo as operadora.nome for operadora in operadoras" ng-model="contato.operadora">
+            <option value="">Selecione uma operadora</option>
+        </select> -->
+        <select ng-options="operadora.codigo as operadora.nome group by operadora.categoria for operadora in operadoras" ng-model="contato.operadora">
+            <option value="">Selecione uma operadora</option>
+        </select>
         <hr>
-        <button type="button" ng-click="adicionarContato(contato)">Adicioar</button>
+        <button type="button" ng-click="adicionarContato(contato)" ng-disabled="!(contato.nome && contato.telefone)">Adicioar</button>
+        <button type="button" ng-click="removerContatos(contatos)" ng-disabled="!isContatoSelecionado(contatos)">Remover</button>
     </div>
 </body>
 
