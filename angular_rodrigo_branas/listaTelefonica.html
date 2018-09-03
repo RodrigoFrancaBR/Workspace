@@ -19,11 +19,17 @@
 
             $scope.contatos = [
                 {
-                    nome: "Rodrigo França", telefone: "98488-0409",
+                    nome: "Rodrigo França", telefone: "98488-0409", dataCadastro: new Date(),
                     operadora: {
                         nome: "CLARO", codigo: "21", cor: "red", categoria: "celular"
                     }
-                }
+                },
+                {
+                    nome: "Alan França", telefone: "98488-0409", dataCadastro: new Date(),
+                    operadora: {
+                        nome: "CLARO", codigo: "21", cor: "blue", categoria: "celular"
+                    }
+                },
             ];
 
             $scope.operadoras = [
@@ -50,7 +56,7 @@
                 }
             ];
             $scope.adicionar = (contato) => {
-                contato
+                contato.dataCadastro = new Date();
                 $scope.contatos.push(angular.copy(contato));
                 delete $scope.contato
                 $scope.contatoForm.$setPristine();
@@ -79,6 +85,10 @@
                     return contato.selecionado;
                 });
             };
+            $scope.orderBy = (campo) => {
+                $scope.campo = campo;
+                $scope.isAscendente = !$scope.isAscendente;
+            };
 
 
 
@@ -94,21 +104,28 @@
 -->
     <h1>{{title}}</h1>
     <br>
+    <div><input type="text" ng-model="busca" placeholder="Buscar pelo que?"></div>
+    <br>
     <table border="1px">
         <tr>
             <th></th>
-            <th>Nome</th>
+            <th><a href="" ng-click="orderBy('nome')">Nome</a></th>
             <th>Telefone</th>
             <th>Operadora</th>
             <th>Código</th>
+            <th>Data de Cadastro</th>
             <th>Cor</th>
         </tr>
-        <tr ng-repeat="contato in contatos" ng-class="{selecionado:contato.selecionado}">
+        <!-- <tr ng-repeat="contato in contatos | filter : busca | orderBy:campo:true" ng-class="{selecionado:contato.selecionado}"> -->
+        <!-- <tr ng-repeat="contato in contatos | filter : {nome : busca}" ng-class="{selecionado:contato.selecionado}"> -->
+        <!-- <tr ng-repeat="contato in contatos | filter : busca | orderBy : campo : isAscendente" ng-class="{selecionado:contato.selecionado}"> -->
+                <tr ng-repeat="contato in contatos | filter : busca | orderBy : campo : !isAscendente" ng-class="{selecionado:contato.selecionado}">
             <td><input type="checkbox" ng-model="contato.selecionado"></td>
             <td>{{contato.nome}}</td>
             <td>{{contato.telefone}}</td>
-            <td>{{contato.operadora.nome}}</td>
+            <td>{{contato.operadora.nome | lowercase}}</td>
             <td>{{contato.operadora.codigo}}</td>
+            <td>{{contato.dataCadastro | date : 'dd/MM/yyyy HH:mm'}}</td>
             <td>
                 <div style="width:30px; height:30px" ng-style="{'background-color':contato.operadora.cor}"></div>
             </td>
@@ -128,7 +145,8 @@
         </label>
         <br>
         <label>Operadoras:
-            <select name="operadora" ng-options="operadora as operadora.nome for operadora in operadoras" ng-required="true" ng-model="contato.operadora">
+            <select name="operadora" ng-options="operadora as operadora.nome group by operadora.categoria for operadora in operadoras"
+                ng-required="true" ng-model="contato.operadora">
                 <option value="">Selecione uma Operadora</option>
             </select>
         </label>
@@ -137,7 +155,6 @@
         <button type="button" ng-disabled="!isContatoSelecionado(contatos)" ng-click="remover(contatos)">Remover Contato</button>
         <button type="button" ng-click="limpar()">Limpar</button>
     </form>
-
     <!--
 Menssagens
 -->
@@ -150,6 +167,9 @@ Menssagens
     <div ng-show="contatoForm.telefone.$invalid && contatoForm.telefone.$dirty">Favor utilizar o formato 'DDDDD-DDDD' para
         o campo telefone</div>
     <div ng-show="contatoForm.operadora.$invalid">Selecione ao menos uma operadora!</div>
+
+
+
 </body>
 
 </html>
