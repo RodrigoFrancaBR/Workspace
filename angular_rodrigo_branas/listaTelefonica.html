@@ -12,12 +12,35 @@
     </style>
     <script src="./js/angular.js"></script>
     <script src="./js/angular-messages.js"></script>
+    <script src="./js/angular-locale_pt-br.js"></script>
     <script>
         const app = angular.module("listaTelefonica", ["ngMessages"]);
-        app.controller("listaTelefonicaCtrl", ($scope) => {
+        // app.controller("listaTelefonicaCtrl", ($scope) => {
+        // app.controller("listaTelefonicaCtrl", ($scope, $filter) => {
+        app.controller("listaTelefonicaCtrl", ($scope, uppercaseFilter) => {
             $scope.title = "Lista Telefônica 2018"
 
             $scope.contatos = [
+                {
+                    // nome: "Marcelo", telefone: "98488-0409", dataCadastro: new Date(),
+                    // nome: $filter('uppercase')("Marcelo"), telefone: "98488-0409", dataCadastro: new Date(),
+                    nome: uppercaseFilter("Marcelo"), telefone: "98488-0409", dataCadastro: new Date(),
+                    operadora: {
+                        nome: "CLARO", codigo: "21", cor: "red", categoria: "celular"
+                    }
+                },
+                {
+                    nome: "Bruna França", telefone: "98488-0409", dataCadastro: new Date(),
+                    operadora: {
+                        nome: "CLARO", codigo: "21", cor: "red", categoria: "celular"
+                    }
+                },
+                {
+                    nome: "Amanda França", telefone: "98488-0409", dataCadastro: new Date(),
+                    operadora: {
+                        nome: "CLARO", codigo: "21", cor: "red", categoria: "celular"
+                    }
+                },
                 {
                     nome: "Rodrigo França", telefone: "98488-0409", dataCadastro: new Date(),
                     operadora: {
@@ -30,29 +53,35 @@
                         nome: "CLARO", codigo: "21", cor: "blue", categoria: "celular"
                     }
                 },
+                {
+                    nome: "Alan França", telefone: "98488-0409", dataCadastro: new Date(),
+                    operadora: {
+                        nome: "CLARO", codigo: "21", cor: "blue", categoria: "celular"
+                    }
+                },
             ];
 
             $scope.operadoras = [
                 {
-                    nome: "CLARO", codigo: "21", cor: "red", categoria: "celular"
+                    nome: "CLARO", codigo: "21", cor: "red", categoria: "celular", precoMinuto: "1"
                 },
                 {
-                    nome: "TIM", codigo: "41", cor: "blue", categoria: "celular"
+                    nome: "TIM", codigo: "41", cor: "blue", categoria: "celular", precoMinuto: "1"
                 },
                 {
-                    nome: "VIVO", codigo: "21", cor: "purple", categoria: "celular"
+                    nome: "VIVO", codigo: "21", cor: "purple", categoria: "celular", precoMinuto: "1"
                 },
                 {
-                    nome: "OI", codigo: "31", cor: "Goldenrod", categoria: "celular"
+                    nome: "OI", codigo: "31", cor: "Goldenrod", categoria: "celular", precoMinuto: "1"
                 },
                 {
-                    nome: "GVT", codigo: "21", cor: "purple", categoria: "fixo"
+                    nome: "GVT", codigo: "21", cor: "purple", categoria: "fixo", precoMinuto: "1"
                 },
                 {
-                    nome: "EMBRATEL", codigo: "21", cor: "red", categoria: "fixo"
+                    nome: "EMBRATEL", codigo: "21", cor: "red", categoria: "fixo", precoMinuto: "1"
                 },
                 {
-                    nome: "TELEMAR", codigo: "31", cor: "Goldenrod", categoria: "fixo"
+                    nome: "TELEMAR", codigo: "31", cor: "Goldenrod", categoria: "fixo", precoMinuto: "1"
                 }
             ];
             $scope.adicionar = (contato) => {
@@ -119,13 +148,14 @@
         <!-- <tr ng-repeat="contato in contatos | filter : busca | orderBy:campo:true" ng-class="{selecionado:contato.selecionado}"> -->
         <!-- <tr ng-repeat="contato in contatos | filter : {nome : busca}" ng-class="{selecionado:contato.selecionado}"> -->
         <!-- <tr ng-repeat="contato in contatos | filter : busca | orderBy : campo : isAscendente" ng-class="{selecionado:contato.selecionado}"> -->
-                <tr ng-repeat="contato in contatos | filter : busca | orderBy : campo : !isAscendente" ng-class="{selecionado:contato.selecionado}">
+        <tr ng-repeat="contato in contatos |limitTo : 5| filter : busca | orderBy : campo : !isAscendente" ng-class="{selecionado:contato.selecionado}">
             <td><input type="checkbox" ng-model="contato.selecionado"></td>
+            <!-- <td>{{contato.nome | limitTo : 2}}</td> -->
             <td>{{contato.nome}}</td>
             <td>{{contato.telefone}}</td>
             <td>{{contato.operadora.nome | lowercase}}</td>
             <td>{{contato.operadora.codigo}}</td>
-            <td>{{contato.dataCadastro | date : 'dd/MM/yyyy HH:mm'}}</td>
+            <td>{{contato.dataCadastro | date : ' MMMM EEEE dd/MM/yyyy HH:mm'}}</td>
             <td>
                 <div style="width:30px; height:30px" ng-style="{'background-color':contato.operadora.cor}"></div>
             </td>
@@ -145,7 +175,7 @@
         </label>
         <br>
         <label>Operadoras:
-            <select name="operadora" ng-options="operadora as operadora.nome group by operadora.categoria for operadora in operadoras"
+            <select name="operadora" ng-options="operadora as operadora.nome +' ('+ (operadora.precoMinuto | currency) + ')' group by operadora.categoria for operadora in operadoras | orderBy : 'nome'"
                 ng-required="true" ng-model="contato.operadora">
                 <option value="">Selecione uma Operadora</option>
             </select>
